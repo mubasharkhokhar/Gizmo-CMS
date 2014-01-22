@@ -1,0 +1,23 @@
+
+
+exports.menu = function(){
+    return {
+        '/test/anooj' : {
+            title : 'Anooj Page',
+            callback : 'anooj',
+            access : {
+                callback : '',
+                arguments : []
+            }
+        }
+    }
+}
+
+exports.init = function(){
+    console.log('test init');
+}
+
+
+exports.anooj = function(req, res, next){
+    res.send('hello Anooj!');
+}

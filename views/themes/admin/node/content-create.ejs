@@ -1,0 +1,127 @@
+<div class="row-fluid">
+    <div class="box span12">
+        <div class="box-header well" data-original-title>
+            <h2>
+                <% if (contentType.id) { %>
+                <i class="icon-pencil"></i>
+                Update Content Type "<%=contentType.title.text%>"
+                <% } else { %>
+                <i class="icon-plus"></i>
+                Create New Content Type
+                <% } %>
+            </h2>
+        </div>
+        <div class="box-content">
+            <form action="" method="post" class="form-horizontal use-ajax-submit" id="node-content-create">
+                <% if (contentType.id) { %>
+                <input type="hidden" name="content_id" value="<%=contentType.id%>"/>
+                <% } %>
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Title</label>
+                        <div class="controls">
+                            <input type="text" name="title" value="<%-contentType.title.text%>" class="span6 typeahead" required="1"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Machine Name</label>
+                        <div class="controls">
+                            <input type="text" name="machine_name"  value="<%-contentType.machine_name%>" class="span6 typeahead" required="1"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Description</label>
+                        <div class="controls">
+                            <textarea name="description" class="span6"><%-contentType.description%></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Submission form settings</legend>
+                    <div class="control-group">
+                        <label class="control-label">Title field label</label>
+                        <div class="controls">
+                            <input type="text" name="title_label" class="span6 typeahead"  value="<%-contentType.title.label%>" required="1"/>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        Custom Fields
+                        <a href="/" id="content-add-fields" class="btn btn-warning btn-white" style="float:right;">
+                            <i class="icon-plus"></i>
+                            Add new field
+                        </a>
+                    </legend>
+                    <div id="content-custom-fields">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Label</th>
+                                    <th>Widget</th>
+                                    <th>Options</th>
+                                    <th>Format</th>
+                                    <th>Default Value</th>
+                                    <th>Operations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-actions">
+                        <input type="submit" value="Save Changes" class="btn btn-primary"/>
+                        <a href="/admin/structure" class="btn">Cancel</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div  id="content-field-dialog" title="Add custom field" style="display:none;">
+    <div class="row-fluid">
+        <form id="widget-form" onsubmit="return false;">
+        <div class="box-content">
+            <div class="control-group">
+                <label class="control-label">Label</label>
+                <div class="controls">
+                    <input type="text" name="label" class="span6 typeahead"  value="" required="1"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Widget</label>
+                <div class="controls">
+                    <select name="widget">
+                        <% for(var i in fieldOptions) { %>
+                        <option value="<%=fieldOptions[i].type%>"><%=fieldOptions[i].name%></option>
+                        <% } %>
+                    </select>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Options</label>
+                <div class="controls">
+                    <input type="text" name="options[]" class="span6 typeahead" disabled value="" required="1"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Format</label>
+                <div class="controls">
+                    <input type="text" name="format" class="span6 typeahead"  value=""/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Default Value</label>
+                <div class="controls">
+                    <input type="text" name="default" class="span6 typeahead"  value=""/>
+                </div>
+            </div>
+            <div class="form-actions">
+                <input type="submit" value="Save Changes" class="btn btn-primary"/>
+                <a href="#" onclick="$('#content-field-dialog').dialog('close');" class="btn">Cancel</a>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>

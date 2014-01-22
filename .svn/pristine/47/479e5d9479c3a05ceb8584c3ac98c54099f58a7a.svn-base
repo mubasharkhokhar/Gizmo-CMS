@@ -1,0 +1,74 @@
+<div class="wrap">
+    <div class="row">
+        <div class="block-7">
+            <h1 class="mt-40 mb-20">Sign-up</h1>
+            <h3 class="normal mt-10"></h3>
+        </div><!--end .block-7-->
+
+        <% if (!success) {%>
+        <%//-form%>
+        <div class="block-5 last" id="featured_form">
+            <form class="signup-form mt-50" method="post" action="/signup">
+                <div class="well">
+                    <h4>Sign up</h4>
+                    <div class="input-group">
+                        <input alt="Please fill out a usernanme" id="user_login" name="username" class="username user-field" placeholder="Username" type="text" tabindex="1">
+
+                        <span class="input-group-btn">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="user-field-div pass-field-div">
+
+
+                        <input id="user_password" name="password" class="password user-field" placeholder="Password" type="password" tabindex="2">
+                        <%-error.password%>
+                    </div>
+
+                    <div class="user-field-div pass-field-div">
+                        <input id="Reset_password" name="confirm" class="Resetpassword user-field" placeholder="Reset Password" type="password" tabindex="3">
+                        <%-error.Resetpassword %>
+                    </div>
+
+                    <div class="user-field-div">
+                        <input id="user_email" name="email" class="email user-field" placeholder="Email Address" type="email" tabindex="4">
+                        <%-error.email%>
+                    </div>
+
+                    <button type="submit" value="Submit">Submit</button>
+                </div>
+
+           <!--     <div class="user-field-div">
+                    <input alt="Please fill out a usernanme" id="user_login" name="username" class="username user-field" placeholder="Username" type="text" tabindex="1">
+                    <%-error.username%>
+                </div>
+                <div class="user-field-div pass-field-div">
+
+
+                    <input id="user_password" name="password" class="password user-field" placeholder="Password" type="password" tabindex="2">
+                    <%-error.password%>
+                </div>
+
+                <div class="user-field-div pass-field-div">
+                    <input id="Reset_password" name="confirm" class="Resetpassword user-field" placeholder="Reset Password" type="password" tabindex="3">
+                    <%-error.Resetpassword %>
+                </div>
+
+                <div class="user-field-div">
+                    <input id="user_email" name="email" class="email user-field" placeholder="Email Address" type="email" tabindex="4">
+                    <%-error.email%>
+                </div>
+
+
+                <button type="submit" value="Submit">Submit</button>-->
+            </form>
+            </div>
+
+            <%  } else { %>
+            <div style="color: #228b22; background-color: greenyellow; padding:10px;">
+                <%=username%>, user successfully created. <a href="/login">Login Here</a>.
+            </div>
+            <% } %>
+        </div>
+    </div>

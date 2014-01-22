@@ -1,0 +1,98 @@
+
+/**
+ * Module dependencies.
+ */
+
+var express = require('express');
+var routes = require('./routes');
+var http = require('http');
+//var path = require('path');
+//var url = require('url');
+//var expressValidator = require('express-validator');
+
+// gizmo Core
+GizmoCore = require('gizmo');
+
+// start the express engine
+GizmoCore.app = express();
+
+// Gizmo Load Resources
+GizmoCore.Resources = {
+    url : require('url'),
+    path : require('path'),
+    forms: require('forms')
+};
+
+GizmoCore.Resources.fields = GizmoCore.Resources.forms.fields;
+GizmoCore.Resources.validators = GizmoCore.Resources.forms.validators;
+
+// gizmo Routes
+var GizmoRoutes = require('./routes/gizmoRoutes');
+
+// all environments
+GizmoCore.app.set('port', process.env.PORT || 3000);
+GizmoCore.app.set('views', GizmoCore.Resources.path.join(__dirname, 'views'));
+GizmoCore.app.set('view engine', 'ejs');
+GizmoCore.app.use(express.favicon());
+GizmoCore.app.use(express.logger('dev'));
+GizmoCore.app.use(express.json());
+GizmoCore.app.use(express.urlencoded());
+GizmoCore.app.use(express.methodOverride());
+GizmoCore.app.use(express.cookieParser('your secret here'));
+GizmoCore.app.use(express.session());
+GizmoCore.app.use(GizmoCore.app.router);
+GizmoCore.app.use(express.static(GizmoCore.Resources.path.join(__dirname, 'public')));
+//GizmoCore.app.use(expressValidator);
+
+// file system
+global.fileSys = require('fs');
+
+// mongodb database connection
+global.mongoose = require('mongoose');
+
+// development only
+if ('development' == GizmoCore.app.get('env')) {
+  GizmoCore.app.use(express.errorHandler());
+}
+
+//GizmoCore.app.all('/*',function (req, res, next){
+//
+//    // boot GizmoCore on application start
+//    var boot = true;
+//    var bootSkipped = false;
+//
+//    // ignore these URIs
+//    var public = ['images', 'javascripts', 'stylesheets', 'favicon.ico', 'themes'];
+//    // get URIs as arrays
+//    var uri = req.url.split('/');
+//
+//    for(var prop in public){
+//        // if uri match the first uri segment then ignore
+//        if (uri[1] == public[prop]){
+//            boot = false;
+//            break;
+//        }
+//    }
+//
+//    // boot GizmoCore
+//    if (boot){
+//        GizmoCore.init(req, res, next);
+//    }else {
+//        bootSkipped = true;
+//        console.log('GizmoCore boot skipped.');
+//        next();
+//    }
+//
+//    if (!GizmoCore.responseSent || bootSkipped){
+//        next();
+//    }
+//});
+
+GizmoCore.boot();
+
+
+GizmoCore.app.get('/', GizmoRoutes.index);
+
+http.createServer(GizmoCore.app).listen(GizmoCore.app.get('port'), function(){
+  console.log('Express server listening on port ' + GizmoCore.app.get('port'));
+});

@@ -1,0 +1,11 @@
+<% include header %>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <% include nav %>
+
+            <div id="content" class="span10">
+                <% include GizmoContent %>
+            </div>
+        </div>
+    </div>
+<% include footer %>

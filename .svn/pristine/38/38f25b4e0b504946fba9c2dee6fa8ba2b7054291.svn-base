@@ -1,0 +1,16 @@
+
+
+Gizmo.Ajax.behaviors.node = function(settings, context){
+
+    var node_form = $('#node-content-create');
+
+    $('input[name="title"]:not(.node-title-keypress-processed)', node_form).keypress(function(e){
+        var value = $(this).val();
+        $('input[name="machine_name"]', node_form).val(value.toLowerCase().replace(/[_\s]/g, '-'));
+    }).addClass('node-title-keypress-processed');
+
+    $('input[name="title"]:not(.node-title-change-processed)', node_form).change(function(e){
+        var value = $(this).val();
+        $('input[name="machine_name"]', node_form).val(value.toLowerCase().replace(/[_\s]/g, '-'));
+    }).addClass('node-title-change-processed');
+}

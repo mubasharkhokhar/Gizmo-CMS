@@ -1,0 +1,21 @@
+<div>
+    <form action="" method="post">
+        <div>
+            <% if (!success) {%>
+            <input type="text" name="username" placeholder="Username"/>
+            <%-error.username%>
+            <input type="password" name="password" placeholder="password"/>
+            <%-error.password%>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+
+    <%=JSON.stringify(GizmoCore.request.session)%>
+
+    <div>
+        <%  } else { %>
+        <%=username%>, user successfully created. <a href="/login">Login Here</a>.
+        <% } %>
+    </div>
+
+</div>

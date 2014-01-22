@@ -1,0 +1,55 @@
+<div class="row-fluid">
+    <div class="box span12">
+        <div class="box-header well" data-original-title>
+            <h2>
+                <% if (contentType.id) { %>
+                <i class="icon-pencil"></i>
+                Update Content Type "<%=contentType.title.text%>"
+                <% } else { %>
+                <i class="icon-plus"></i>
+                Create New Content Type
+                <% } %>
+            </h2>
+        </div>
+        <div class="box-content">
+            <form action="" method="post" class="form-horizontal use-ajax-submit" id="node-content-create">
+                <% if (contentType.id) { %>
+                <input type="hidden" name="content_id" value="<%=contentType.id%>"/>
+                <% } %>
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">Title</label>
+                        <div class="controls">
+                            <input type="text" name="title" class="span6 typeahead" required="1"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Machine Name</label>
+                        <div class="controls">
+                            <input type="text" name="machine_name" class="span6 typeahead" required="1"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Description</label>
+                        <div class="controls">
+                            <textarea name="description" class="span6"></textarea>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Submission form settings</legend>
+                    <div class="control-group">
+                        <label class="control-label">Title field label</label>
+                        <div class="controls">
+                            <input type="text" name="title_label" class="span6 typeahead" value="Title" required="1"/>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <input type="submit" value="Save Changes" class="btn btn-primary"/>
+                        <input type="reset" value="Cancel" class="btn"/>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

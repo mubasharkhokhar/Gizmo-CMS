@@ -1,0 +1,48 @@
+/**
+ * Created by Mubashar Khokhar on 12/1/13.
+ */
+
+exports.index  = function(req, res, next){
+    GizmoCore.render('index');
+};
+
+exports.install = function (req, res, next){
+
+    // check for config file
+    // if exist then redirect to root '/'
+    if (global.configAvailable != undefined ){
+//        res.redirect('/');
+    }
+
+//    next();
+//   res.render('admin/setup', { page_title: GizmoCore.config.site_name });
+};
+
+//exports.signup = function (req, res, next){
+//   if (req.method == 'POST'){
+///*
+//        req.assert('username', 'UserName is required').notEmpty();
+//        req.assert('email', 'A valid email is required').isEmail();
+//        var errors = req.validationErrors();
+//
+//        console.log(errors);
+//
+//
+//*/
+//
+//
+//        var userData = {
+//            username : req.body.username,
+//            password : req.body.pwd,
+//            email : req.body.email
+//        };
+//
+//        var user = GizmoCore.Schema.User(userData);
+//        user.save();
+//
+//        console.log('Data is saved!');
+//
+//    }
+//
+//    GizmoCore.render('users/signup', {name : 'Mubashar Khokhar 123'});
+//};

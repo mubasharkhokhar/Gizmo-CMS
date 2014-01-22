@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title><%=GizmoCore.modules.theme.getTitle()%></title>
+
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="/stylesheets/blog-post.css" rel="stylesheet">
+
+    <!-- Style CSS -->
+    <link href="/stylesheets/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/"><%=GizmoCore.config.site_name%></a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                <% for(var i in GizmoCore.navs["MENU_MAIN"]) { %>
+                    <li><a href="<%=GizmoCore.navs["MENU_MAIN"][i].link%>"><%=GizmoCore.navs["MENU_MAIN"][i].title%></a></li>
+                <% } %>
+            </ul>
+
+            <div style="float:right; color:#FFF;" class="navbar-brand">
+                <% var sessUser = GizmoCore.invoke('session','user','username')%>
+                Welcome, <%-(sessUser) ? sessUser : 'Guest'%>!
+            </div>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container -->
+</nav>
+
+ </body>
+
+    <div class="container">

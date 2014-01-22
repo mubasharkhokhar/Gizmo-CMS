@@ -1,0 +1,31 @@
+
+exports.init = function(){
+    console.log('user is booting!');
+};
+
+exports.menu = function () {
+
+    var menu = {};
+
+    menu = {
+        "/signup/" : {
+            title  : 'User Signup',
+            type : 'MENU',
+            page : {
+                callback : 'demo_func',
+                arguments : ['hello world', 'demo']
+            },
+            access : {
+                    callback : '',
+                    arguments : []
+            }
+        }
+    };
+
+    return menu;
+};
+
+exports.demo_func = function (args){
+
+    GizmoCore.render('demo');
+};

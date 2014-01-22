@@ -1,0 +1,8 @@
+//var Schema = mongoose.Schema;
+//
+//var userSchema = new Schema({
+//    vorname:String,
+//    nachname:String,
+//    zeitalter:Number
+//});
+//module.exports = mongoose.model('users', userSchema);

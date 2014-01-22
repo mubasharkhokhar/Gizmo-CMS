@@ -1,0 +1,45 @@
+<div class="app-login">
+    <div id="header">
+        <div id="logo">
+            <a href="/"></a>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="app-login-container">
+            <div class="outline-gradient-box">
+                <div class="pt-10 pl-10 pr-10">
+                    <h1>log In</h1>
+
+                    <div class="pb-10"></div>
+
+
+                    <form accept-charset="UTF-8" action="https://www.assembla.com/do_login" class="s-form" id="login-box" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="✓"><input name="authenticity_token" type="hidden" value="ov4/VdGgn6RlZQdJ7PZOAwEgfFLp+fe9nuaIotM5+f8="></div>
+                        <input id="portfolio_id" name="portfolio_id" type="hidden">
+                        <input autofocus="autofocus" class="username" id="user_login" name="user[login]" placeholder="Username" tabindex="1" type="text">
+                        <a href="/user/forgot_login" class="input-link">Forgot?</a>
+                        <input class="password" id="user_password" name="user[password]" placeholder="Password" tabindex="2" type="password">
+                        <a href="/user/forgot_password" class="input-link">Forgot?</a>
+                        <label class="checkbox" for="cookie_remember_me">
+                            <input name="cookie[remember_me]" type="hidden" value="off"><input checked="checked" id="cookie_remember_me" name="cookie[remember_me]" type="checkbox" value="on">
+                            Remember me
+                        </label>
+
+
+                        <input class="gray-btn" name="commit" tabindex="3" type="submit" value="Sign In">
+                    </form>  </div>
+
+
+            </div>
+
+            <div class="no-account">
+                <p>
+                    <a href="http://localhost:3000/signup"></a>
+                    <em></em>
+                    <a href="/signup">Create an Account</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>

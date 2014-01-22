@@ -1,0 +1,19 @@
+
+exports.page = {};
+
+exports.init = function() {
+    GizmoCore.modules.theme.page.title = GizmoCore.config.site_name;
+};
+
+exports.setTitle = function(title){
+    GizmoCore.modules.theme.page.title = title;
+};
+
+
+exports.setTheme = function(theme){
+   GizmoCore.config.theme = theme;
+}
+
+exports.getTitle = function(){
+    return GizmoCore.modules.theme.page.title;
+};

@@ -1,0 +1,12 @@
+/**
+ * Created by Mubashar Khokhar on 11/30/13.
+ */
+
+
+exports.index = function(req, res){
+    res.render('setup/index', { title: 'Gizmo Setup' });
+};
+
+exports.setupDatabase = function(){
+    res.send('This is demo database');
+};

@@ -1,0 +1,49 @@
+
+exports.init = function(){
+
+}
+
+
+exports.menu = function(){
+
+    var menu = {};
+
+    menu = {
+        '/admin/node/create': {
+            title : 'Create Content',
+            callback: 'create',
+            type : 'MENU_ADMIN_STRUCTURE',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        }
+    };
+
+    return menu;
+}
+
+exports.library = function () {
+    var lib = [];
+
+    lib = [
+        {
+            src : '/javascripts/node.behaviors.js',
+            version : '1.0'
+        }
+    ];
+
+    return { 'node' : lib };
+}
+
+exports.contentCreate = function(req, res, next){
+    GizmoCore.config.theme = 'admin';
+    GizmoCore.render('node/content-create');
+}
+
+exports.create = function(req, res, next){
+
+    GizmoCore.config.theme = 'admin';
+    GizmoCore.render('node/create');
+}

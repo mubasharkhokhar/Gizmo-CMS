@@ -1,0 +1,13 @@
+<% include header %>
+
+<div class="row">
+    <div class="col-lg-8">
+        <% include GizmoContent %>
+    </div>
+    <div class="col-lg-4">
+        <% include sidebar %>
+    </div>
+</div>
+
+<% include footer %>
+

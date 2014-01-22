@@ -1,0 +1,340 @@
+
+exports.init = function(){
+
+}
+
+exports.schema = function(){
+    var contentSchema = new GizmoCore.lib.mongoose.Schema({
+        title :  {
+            text : String,
+            label : String
+        },
+        machine_name : String,
+        description : String,
+        fields : Object,
+        creator : String,
+        date  : Date
+    });
+
+    GizmoCore.Schema.Content = GizmoCore.db.model('Content',contentSchema, 'content');
+
+    var nodeSchame = new GizmoCore.lib.mongoose.Schema({
+        title : String,
+        body : String,
+        tags : Array,
+        alias : String,
+        created : Date,
+        author : String,
+        menu_type : []
+    });
+
+    GizmoCore.Schema.Node = GizmoCore.db.model('Node',nodeSchame, 'nodes');
+}
+
+exports.menu = function(){
+
+    var menu = {};
+
+    menu = {
+        '/admin/content/create': {
+            title : 'Create Content Type',
+            callback: 'contentCreate',
+            type : 'MENU_ADMIN_STRUCTURE',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        },
+        '/admin/content/:id/edit': {
+            title : 'Update Content',
+            callback: 'contentCreate',
+            type : 'MENU_ADMIN_CTYPE_ACTION',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        },
+        '/admin/content/:id/remove': {
+            title : 'Remove Content',
+            callback: 'contentRemove',
+            type : 'MENU_ADMIN_CTYPE_ACTION',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        },
+        '/node/create' : {
+            title  : 'Create Content',
+            callback  : 'create',
+            type : 'MENU_ADMIN',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        },
+        '/node/:type/create' : {
+            title  : 'Create Content',
+            callback  : 'create',
+            type : 'MENU_NODE_TYPE',
+            access : {
+                callback : '',
+                arguments : []
+            },
+            theme : 'admin'
+        }    };
+
+    return menu;
+}
+
+exports.library = function () {
+    var lib = [];
+
+    lib = [
+        {
+            src : '/javascripts/node.behaviors.js',
+            version : '1.0'
+        }
+    ];
+
+    return { 'node' : lib };
+}
+
+exports.contentCreate = function(req, res, next){
+
+    var form = GizmoCore.utils.forms.create({
+        title: GizmoCore.utils.fields.string({
+            required: true,
+            validators: [GizmoCore.utils.validators.rangelength(3,20)]
+        }),
+        machine_name: GizmoCore.utils.fields.string({
+            required: true,
+            validators: [
+                GizmoCore.utils.validators.rangelength(3,20),
+                GizmoCore.utils.validators.regexp(/^[-\sa-zA-Z]+$/)
+            ]
+        }),
+        title_label:  GizmoCore.utils.fields.password({
+            required: true,
+            data : 'Title Label',
+            validators: [
+                GizmoCore.utils.validators.rangelength(3,20)
+//                ,GizmoCore.utils.validators.requiresFieldIfEmpty('title_label')
+            ]
+        })
+    });
+
+    if (req.method == 'POST'){
+
+        form.handle(req, {
+            success : function (form) {
+
+                GizmoCore.Schema.Content.findOne({
+                    $or : [
+                        { machine_name : GizmoCore.input.post.machine_name },
+                        { title : GizmoCore.input.post.title }
+                    ]
+                }, function(err, row){
+
+                    if (!row && !GizmoCore.input.post.content_id){
+
+                        var fields = (GizmoCore.input.post.fields) ? GizmoCore.input.post.fields : [];
+
+                        for(var i in fields){
+                            fields[i] = JSON.parse(fields[i]);
+                        }
+
+                        var content = GizmoCore.Schema.Content({
+                            title : {
+                                text : GizmoCore.input.post.title,
+                                label : GizmoCore.input.post.title_label
+                            },
+                            machine_name : GizmoCore.input.post.machine_name,
+                            description : GizmoCore.input.post.description,
+                            fields : fields
+                        });
+
+                        content.save();
+
+                        GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                            type : 'success',
+                            text : 'Content created successfully.'
+                        });
+                        GizmoCore.modules.ajax.commandInvoke('body','redirectUrl', { url : '/admin/structure' });
+                        GizmoCore.render('node/content-create');
+                    }else {
+
+                        if (GizmoCore.input.post.content_id == req.params.id){
+                            var content = {
+                                title : {
+                                    text : GizmoCore.input.post.title,
+                                    label : GizmoCore.input.post.title_label
+                                },
+                                machine_name : GizmoCore.input.post.machine_name,
+                                description : GizmoCore.input.post.description
+                            };
+
+                            GizmoCore.Schema.Content.update({ _id: req.params.id }, { $set:  content }, { upsert: true }, function(err, status){
+                                GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                                    type : (!status) ? 'error' :'success' ,
+                                    text : (!status) ? err : 'Content updated successfully.'
+                                });
+                                GizmoCore.render('node/content-create');
+                            });
+                        }else {
+                            GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                                type : 'error',
+                                text : 'Content type already exist.'
+                            });
+                            GizmoCore.render('node/content-create');
+                        }
+                    }
+                });
+            },
+            error : function (form) {
+
+                for(var field in form.fields){
+                    if (form.fields[field].error != null){
+                        GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                            type : 'error',
+                            text : form.fields[field].error
+                        });
+                        GizmoCore.render('node/content-create');
+                    }
+                }
+            }
+        });
+    }else {
+
+        var data = {
+            contentType :{
+                id : null,
+                title : {
+                    text : null,
+                    label : null
+                },
+                description : null,
+                machine_name : null
+            }
+        };
+
+        data.fieldOptions = GizmoCore.modules.fields.getOptions();
+
+        if (req.params.id){
+            GizmoCore.Schema.Content.findOne({_id : req.params.id}, function(err, content){
+                console.log(content);
+                if (content){
+                    data.contentType = content;
+                    GizmoCore.render('node/content-create', data);
+                }else {
+//                    GizmoCore.response.redirect('/admin/structure/');
+                }
+            });
+        }else {
+            GizmoCore.render('node/content-create', data);
+        }
+
+    }
+}
+
+exports.contentRemove = function(req, res, next){
+
+    if (req.params.id){
+
+        GizmoCore.Schema.Content.remove({_id : req.params.id}, function (err){
+            // nodes functionality to be added here
+
+            GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                type : 'success',
+                text : 'Content type deleted succesfully.'
+            });
+
+            GizmoCore.modules.ajax.commandInvoke('#content-type-row-'+req.params.id, 'remove');
+
+            GizmoCore.render();
+        });
+
+    }else {
+        GizmoCore.render();
+    }
+}
+
+exports.create = function(req, res, next){
+
+    if (!req.params.type){
+        GizmoCore.Schema.Content.find({}, function(err, contentTypes){
+            if (!err){
+                GizmoCore.render('node/index', {contentTypes : contentTypes});
+            }else {
+                res.redirect('/admin/structure');
+            }
+        });
+    }else {
+
+        var form = GizmoCore.utils.forms.create({
+            title: GizmoCore.utils.fields.string({
+                required: true,
+                validators: [GizmoCore.utils.validators.rangelength(3,50)]
+            }),
+            body: GizmoCore.utils.fields.string({required: true}),
+        });
+
+        form.handle(req, {
+            success : function (form){
+
+                var node = {
+                    title : GizmoCore.input.post.title,
+                    tags : GizmoCore.input.post.tags.split(','),
+                    body : GizmoCore.input.post.body,
+                    alias : GizmoCore.input.post.alias,
+                    created : new Date(),
+                    author : (GizmoCore.request.session.user) ? GizmoCore.request.session.user : null,
+                    menu_type : GizmoCore.input.post.menu
+                };
+
+                console.log(node);
+                node = GizmoCore.Schema.Node(node);
+
+                node.save(function (err, status){
+                    if (status){
+                        GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                            type : 'success',
+                            text : 'Node created successfully.'
+                        });
+                    }else {
+                        GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                            type : 'error',
+                            text : err.err
+                        });
+                    }
+                    GizmoCore.render('node/'+req.params.type+'/create');
+                });
+            },
+            error : function (form){
+
+                for(var field in form.fields){
+                    if (form.fields[field].error != null){
+                        GizmoCore.modules.ajax.commandInvoke('body', 'notify',{
+                            type : 'error',
+                            text : form.fields[field].error
+                        });
+                        GizmoCore.render('node/content-create');
+                    }
+                }
+            },
+            empty : function(form){
+                GizmoCore.Schema.Content.findOne({machine_name : req.params.type}, function(err, contentType){
+                    if (!err){
+                        GizmoCore.invoke('setTitle','theme', 'Create ' + contentType.title.text);
+                        GizmoCore.render('node/create', {contentType : contentType});
+                    }else {
+                        res.redirect('/admin/structure');
+                    }
+                });
+            }
+        });
+    }
+}

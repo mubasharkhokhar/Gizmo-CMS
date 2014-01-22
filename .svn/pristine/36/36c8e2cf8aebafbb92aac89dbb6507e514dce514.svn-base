@@ -1,0 +1,33 @@
+<div>
+    <form action="" method="post">
+        <div>
+            <div class="well">
+                <h4>Login</h4>
+                <div class="input-group">
+                    <input type="text" name="username" placeholder="Username"/>
+                    <input type="password" name="password" placeholder="password"/>
+                        <span class="input-group-btn">
+                            <input type="submit" value="Submit">
+                            </button>
+                        </span>
+                </div>
+                <!-- /input-group -->
+            </div>
+         <!--   <% if (!success) {%>
+            <input type="text" name="username" placeholder="Username"/>
+            <%-error.username%>
+            <input type="password" name="password" placeholder="password"/>
+            <%-error.password%>
+            <input type="submit" value="Submit">
+        </div>-->
+    </form>
+
+    <%=JSON.stringify(GizmoCore.request.session)%>
+
+    <div>
+        <%  } else { %>
+        <%=username%>, user successfully created. <a href="/login">Login Here</a>.
+        <% } %>
+    </div>
+
+</div>

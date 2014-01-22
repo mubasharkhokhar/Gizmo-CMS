@@ -1,0 +1,219 @@
+
+exports.init = function(){
+//    console.log('User initialized');
+};
+
+exports.info = function () {
+    return {
+        user : {
+            name : 'Users',
+            description : 'User module',
+            version : '1.0',
+            dependencies: []
+        }
+    };
+};
+
+exports.menu = function () {
+
+    var menu = {};
+
+    menu = {
+        '/signup' : {
+            title  : 'User signup',
+            type : 'MENU_MAIN',
+            callback : 'signup',
+            access : {
+                    callback : '',
+                    arguments : [1,2]
+            }
+        },
+        '/profile/:id' : {
+            title : 'Demo User',
+            type : 'MENU_MAIN',
+            callback : 'profile',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        },
+        '/test/:id/backup/:name' : {
+            title : 'Demo User',
+            type : 'MENU_MAIN',
+            callback : 'test',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        },
+        '/login' : {
+            title  : 'User login',
+            type : 'MENU_MAIN',
+            callback : 'login',
+            access : {
+                callback : '',
+                arguments : [1,2]
+            }
+        }
+    };
+
+    return menu;
+};
+
+
+exports.schema = function(){
+
+    var UserSchema = new GizmoCore.lib.mongoose.Schema ({
+        username : String,
+        password : String,
+        email : String,
+        age : Number,
+        created_at : Date
+    });
+
+    GizmoCore.Schema.User = GizmoCore.db.model('User', UserSchema, 'users');
+};
+
+
+
+exports.checkLogin = function() {
+    if(GizmoCore.request.session.user != undefined){
+        GizmoCore.response.redirect('/');
+    }
+}
+
+exports.signup = function (req, res, next){
+
+    GizmoCore.modules.user.checkLogin();
+
+    var reg_form = GizmoCore.utils.forms.create({
+        username: GizmoCore.utils.fields.string({
+            required: true,
+            validators: [GizmoCore.utils.validators.rangelength(5,20)]
+        }),
+        password: GizmoCore.utils.fields.password({required: true}),
+        confirm:  GizmoCore.utils.fields.password({
+            required: true,
+            validators: [
+                GizmoCore.utils.validators.rangelength(6,16),
+                GizmoCore.utils.validators.matchField('password')
+            ]
+        }),
+        email: GizmoCore.utils.fields.email({required: true})
+    });
+
+     var error = {
+        username : null,
+        email : null,
+        password : null,
+        Resetpassword : null
+    };
+
+    if (GizmoCore.request.method == 'POST'){
+
+        reg_form.handle(GizmoCore.request, {
+            success:  function () {
+
+                GizmoCore.Schema.User.findOne({$or : [{username : GizmoCore.input.post.username}, {email : GizmoCore.input.post.email }]}, function(err, user){
+
+                    if (!user){
+                        var bcrypt = require ('bcrypt-nodejs');
+                        var encryptPass = bcrypt.hashSync(GizmoCore.input.post.password);
+
+                        var user = GizmoCore.Schema.User({
+                            username : GizmoCore.input.post.username,
+                            password : encryptPass,
+                            email : GizmoCore.input.post.email
+                        });
+
+                        user.save();
+
+                        GizmoCore.render('signup', {form : reg_form.toHTML(), success : true, username : GizmoCore.input.post.username, error:error });
+                    }else {
+                        error.username = 'Username or Email already exists';
+                        GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username : null, error : error});
+                    }
+                });
+            },
+            error : function(form) {
+
+                error.username = form.fields.username.errorHTML();
+                error.password = form.fields.password.errorHTML();
+                error.Resetpassword = form.fields.confirm.errorHTML();
+                error.email = form.fields.email.errorHTML();
+
+                GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username : null, error : error });
+            }
+        });
+    }else {
+        GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username : null, error : error });
+    }
+}
+
+
+exports.profile = function(req, res, next){
+//    console.log(req.params.id);
+    res.send(req.params.id);
+}
+
+exports.test = function(req, res, next){
+
+    res.send(req.params.id + ' -> ' +req.params.name);
+}
+
+exports.login = function(req,res,next){
+
+    if(GizmoCore.request.session.user != undefined){
+        GizmoCore.response.redirect('/');
+    }
+    // if post
+        // username + pwd (encrypted)
+        // check from db
+        // if exist show msg success
+        // else show form again with error
+
+    // else
+
+    var login_form = GizmoCore.utils.forms.create({
+        username: GizmoCore.utils.fields.string({required: true}),
+        password: GizmoCore.utils.fields.password({required: true})
+    });
+
+    var error = {
+        username : null,
+        password : null
+    };
+
+
+    if (GizmoCore.request.method == 'POST'){
+
+        login_form.handle(GizmoCore.request, {
+            success:  function () {
+
+                GizmoCore.Schema.User.findOne({
+                    username : GizmoCore.input.post.username
+//                        password : encryptPass
+                },  function (err, user) {
+
+                    if (user != null && GizmoCore.utils.bcrypt.compareSync(GizmoCore.input.post.password, user.password)){
+                        GizmoCore.render('login', {form : null, success : true, username : GizmoCore.input.post.username });
+                        GizmoCore.request.session.user = user;
+                    }else {
+                        error.password = 'Username or Password is incorrect!';
+                        GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null, error : error });
+                    }
+                });
+            },
+            error : function(form){
+
+                error.username = form.fields.username.errorHTML();
+                error.password = form.fields.password.errorHTML();
+                console.log(form.fields.confirm);
+
+                GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null, error : error });
+            }
+        });
+    }else {
+        GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null, error : error   });
+    }
+}

@@ -1,0 +1,22 @@
+<form action="/login" method="post">
+    <div>
+        <div class="well">
+            <h4>Login</h4>
+            <% if (error.password ) {%>
+            <div class="error">
+                <%-error.password%>
+            </div>
+            <% } %>
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Username" value="<%-(GizmoCore.input.post.username) ? GizmoCore.input.post.username:null%>" class="form-control" required="1"/>
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" class="form-control" required="1"/>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Submit" class="btn btn-primary" />
+            </div>
+            <!-- /input-group -->
+        </div>
+    </div>
+</form>

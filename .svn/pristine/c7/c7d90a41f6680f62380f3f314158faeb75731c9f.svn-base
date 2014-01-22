@@ -1,0 +1,8 @@
+<% include header %>
+
+
+<div>This is home page.</div>
+
+
+<% include footer %>
+

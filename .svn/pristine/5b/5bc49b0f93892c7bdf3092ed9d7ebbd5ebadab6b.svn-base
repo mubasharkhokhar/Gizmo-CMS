@@ -1,0 +1,18 @@
+<!-- left menu starts -->
+<div class="span2 main-menu-span">
+    <div class="well nav-collapse sidebar-nav">
+        <ul class="nav nav-tabs nav-stacked main-menu">
+            <li class="nav-header hidden-tablet">Main</li>
+            <% for(var i in GizmoCore.navs){ %>
+                <li>
+                    <a class="ajax-link" href="<%=GizmoCore.navs[i].link%>">
+                        <i class="icon-cog"></i>
+                        <span class="hidden-tablet">&nbsp;<%=GizmoCore.navs[i].title%></span>
+                    </a>
+                </li>
+            <%} %>
+        </ul>
+    </div><!--/.well -->
+</div><!--/span-->
+<!-- left menu ends -->
+

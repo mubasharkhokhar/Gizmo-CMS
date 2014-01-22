@@ -1,0 +1,61 @@
+
+exports.commands = [];
+
+exports.init = function(){
+
+};
+
+exports.isAjax = function (){
+
+    if (GizmoCore.request.xhr != undefined){
+        return GizmoCore.request.xhr;
+    }else {
+        return false;
+    }
+};
+
+exports.commandInvoke = function(selector, method, options){
+    this.commands.push({
+        type : 'command',
+        selector : selector,
+        method : method,
+        options : options
+    });
+};
+
+
+exports.__getCommands = function () {
+    return this.commands;
+}
+
+exports.__resetCommands =  function(){
+    this.commands = [];
+}
+
+exports.libraries = function(){
+
+    var libs = GizmoCore.invoke('library');
+    console.log(libs);
+    var html = '';
+    for(var name in libs){
+        for(var i in libs[name])
+        html += '<script type="application/javascript" src="'+libs[name][i].src+'"></script>\n';
+    }
+
+    return html.toString();
+}
+
+exports.library = function () {
+    var lib = [
+        {
+            src : '/javascripts/ajax.core.js',
+            version : '1.0'
+        },
+        {
+            src : '/javascripts/ajax.behaviors.js',
+            version : '1.0'
+        }
+    ];
+
+    return { 'node' : lib };
+}

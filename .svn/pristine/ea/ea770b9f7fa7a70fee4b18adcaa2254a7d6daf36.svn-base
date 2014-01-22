@@ -1,0 +1,179 @@
+
+exports.init = function(){
+    console.log('User initialized');
+};
+
+exports.info = function () {
+    return {
+        user : {
+            name : 'Users',
+            description : 'User module',
+            version : '1.0',
+            dependencies: []
+        }
+    };
+}
+
+exports.menu = function () {
+
+    var menu = {};
+
+    menu = {
+        '/signup' : {
+            title  : 'User signup',
+            type : 'MENU_MAIN',
+            callback : 'signup',
+            access : {
+                    callback : '',
+                    arguments : [1,2]
+            }
+        },
+        '/profile/:id' : {
+            title : 'Demo User',
+            type : 'MENU_MAIN',
+            callback : 'profile',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        },
+        '/test/:id/backup/:name' : {
+            title : 'Demo User',
+            type : 'MENU_MAIN',
+            callback : 'test',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        },
+        '/login' : {
+            title  : 'User login',
+            type : 'MENU_MAIN',
+            callback : 'login',
+            access : {
+                callback : '',
+                arguments : [1,2]
+            }
+        }
+    };
+
+    return menu;
+};
+
+
+exports.schema = function(){
+
+    var UserSchema = new GizmoCore.lib.mongoose.Schema ({
+        username : String,
+        password : String,
+        email : String,
+        age : Number,
+        created_at : Date
+    });
+
+    GizmoCore.Schema.User = GizmoCore.db.model('User', UserSchema, 'users');
+}
+
+exports.signup = function (req, res, next){
+
+    var reg_form = GizmoCore.Resources.forms.create({
+        username: GizmoCore.Resources.fields.string({required: true}),
+        password: GizmoCore.Resources.fields.password({required: true}),
+        confirm:  GizmoCore.Resources.fields.password({
+            required: true,
+            validators: [GizmoCore.Resources.validators.matchField('password')]
+        }),
+        email: GizmoCore.Resources.fields.email({required: true})
+    });
+
+
+    if (GizmoCore.request.method == 'POST'){
+
+        reg_form.handle(GizmoCore.request, {
+            success:  function () {
+
+                var bcrypt = require ('bcrypt-nodejs');
+                var encryptPass = bcrypt.hashSync(GizmoCore.input.post.password);
+
+                var user = GizmoCore.Schema.User({
+                    username : GizmoCore.input.post.username,
+                    password : encryptPass,
+                    email : GizmoCore.input.post.email
+                });
+
+                user.save();
+
+                GizmoCore.render('signup', {form : null, success : true, username : GizmoCore.input.post.username });
+            },
+            error : function() {
+                GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username : null });
+            },
+            empty : function(){
+                GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username: null });
+            }
+        });
+    }else {
+        GizmoCore.render('signup', {form : reg_form.toHTML(), success : false, username : null });
+    }
+}
+
+
+exports.profile = function(req, res, next){
+
+//    console.log(req.params.id);
+    res.send(req.params.id);
+}
+
+exports.test = function(req, res, next){
+
+    res.send(req.params.id + ' -> ' +req.params.name);
+}
+
+exports.login = function(req,res,next){
+
+    // if post
+        // username + pwd (encrypted)
+        // check from db
+        // if exist show msg successe
+        // else show form again with error
+
+    // else
+
+        var login_form = GizmoCore.Resources.forms.create({
+            username: GizmoCore.Resources.fields.string({required: true}),
+            password: GizmoCore.Resources.fields.password({required: true})
+        });
+
+
+        if (GizmoCore.request.method == 'POST'){
+
+            login_form.handle(GizmoCore.request, {
+                success:  function () {
+
+                    GizmoCore.Schema.User.findOne({
+                        username : GizmoCore.input.post.username
+//                        password : encryptPass
+                    },  function (err, user) {
+
+                        var bcrypt = require ('bcrypt-nodejs');
+//                        var encryptPass = bcrypt.hashSync(GizmoCore.input.post.password);
+                        console.log('pwd: ' + bcrypt.compareSync(GizmoCore.input.post.password, user.password));
+                        if (user != null && bcrypt.compareSync(GizmoCore.input.post.password, user.password)){
+                            GizmoCore.render('login', {form : null, success : true, username : GizmoCore.input.post.username });
+                        }else {
+                            GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null });
+                        }
+                        console.log(user);
+                    });
+                },
+                error : function() {
+                    GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null });
+                },
+                empty : function(){
+                    GizmoCore.render('login', {form : login_form.toHTML(), success : false, username: null });
+                }
+            });
+        }else {
+            GizmoCore.render('login', {form : login_form.toHTML(), success : false, username : null });
+        }
+}

@@ -1,0 +1,30 @@
+
+exports.menu = function() {
+
+    var menu = {};
+
+    menu = {
+        "/admin" : {
+            title  : 'Administration',
+            type : 'MENU_ADMIN',
+            callback : 'home',
+            access : {
+                callback : '',
+                arguments : []
+            }
+        }
+    };
+
+    return menu;
+};
+
+exports.init = function(){
+
+};
+
+exports.home = function (req, res, next) {
+
+    GizmoCore.config.theme = 'admin';
+    GizmoCore.render('prakhar');
+//    next();
+};

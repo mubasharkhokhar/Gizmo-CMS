@@ -1,0 +1,16 @@
+<div class="well">
+    <h4>Navigation</h4>
+    <div class="col-lg-12">
+        <ul class="list-unstyled">
+            <% if (GizmoCore.invoke('isLoggedIn','user')) {%>
+                <% for(var i in GizmoCore.navs['MENU_NAV_USER']){%>
+                <li><a href="<%=GizmoCore.navs['MENU_NAV_USER'][i].link%>"><%=GizmoCore.navs['MENU_NAV_USER'][i].title%></a></li>
+                <% } %>
+            <% } else { %>
+                <% for(var i in GizmoCore.navs['MENU_NAV_GUEST']){%>
+                <li><a href="<%=GizmoCore.navs['MENU_NAV_GUEST'][i].link%>"><%=GizmoCore.navs['MENU_NAV_GUEST'][i].title%></a></li>
+                <% } %>
+            <% } %>
+        </ul>
+    </div>
+</div>

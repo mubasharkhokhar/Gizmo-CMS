@@ -1,0 +1,52 @@
+
+exports.init = function(){
+    console.log('user is booting!');
+};
+
+exports.menu = function () {
+
+    var menu = {};
+
+    menu = {
+        '/signup' : {
+            title  : 'User Signup',
+            type : 'MENU_MAIN',
+            callback : 'signup',
+            access : {
+                    callback : '',
+                    arguments : [1,2]
+            }
+        },
+        '/demo/:id' : {
+            title : 'Demo User',
+            type : 'MENU_ADMIN',
+            callback : 'signup',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        }
+    };
+
+    return menu;
+};
+
+exports.signup = function (req, res, next){
+
+    if (GizmoCore.request.method == 'POST'){
+        console.log(GizmoCore.input.post);
+    }
+    GizmoCore.render('demo');
+};
+
+exports.schema = function(){
+
+    var UserSchema = new mongoose.Schema ({
+        vorname : String,
+        nachname : String,
+        email : String,
+        age : Number,
+    });
+
+    GizmoCore.Schema.User = GizmoCore.db.model('User', UserSchema, 'users');
+}

@@ -1,0 +1,98 @@
+
+exports.init = function(){
+    console.log('user is booting!');
+};
+
+exports.menu = function () {
+
+    var menu = {};
+
+    menu = {
+        '/signup' : {
+            title  : 'User signup',
+            type : 'MENU_MAIN',
+            callback : 'signup',
+            access : {
+                    callback : '',
+                    arguments : [1,2]
+            }
+        },
+        '/profile/:id' : {
+            title : 'Demo User',
+            type : 'MENU_ADMIN',
+            callback : 'profile',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        },
+        '/test/:id/backup/:name' : {
+            title : 'Demo User',
+            type : 'MENU_ADMIN',
+            callback : 'test',
+            access : {
+                callback : '',
+                arguments: []
+            }
+        }
+    };
+
+    return menu;
+};
+
+
+exports.schema = function(){
+
+    var UserSchema = new mongoose.Schema ({
+        username : String,
+        password : String,
+        email : String,
+        age : Number,
+        created_at : Date
+    });
+
+    GizmoCore.Schema.User = GizmoCore.db.model('User', UserSchema, 'users');
+}
+
+exports.signup = function (req, res, next){
+
+    var reg_form = GizmoCore.Resources.forms.create({
+        username: GizmoCore.Resources.fields.string({required: true}),
+        password: GizmoCore.Resources.fields.password({required: true}),
+        confirm:  GizmoCore.Resources.fields.password({
+            required: true,
+            validators: [GizmoCore.Resources.validators.matchField('password')]
+        }),
+        email: GizmoCore.Resources.fields.email({required: true})
+    });
+
+
+    if (GizmoCore.request.method == 'POST'){
+
+        reg_form.handle(GizmoCore.request, {
+            success:  function () {
+0
+                console.log('Data is saved!');
+            },
+            error : function() {
+                console.log('There is some error in the form!');
+            },
+            empty : function(){
+                console.log('There is some field that is empty!');
+            }
+        });
+   }
+   GizmoCore.render('signup', {form : reg_form.toHTML() });
+}
+
+
+exports.profile = function(req, res, next){
+
+//    console.log(req.params.id);
+    res.send(req.params.id);
+}
+
+exports.test = function(req, res, next){
+
+    res.send(req.params.id + ' -> ' +req.params.name);
+}

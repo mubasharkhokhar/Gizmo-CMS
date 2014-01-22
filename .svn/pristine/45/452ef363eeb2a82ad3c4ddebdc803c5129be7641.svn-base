@@ -1,0 +1,294 @@
+
+
+exports.configFile = __dirname + "/../../config/settings.json";
+exports.config = {};
+exports.hasConfig = false;
+exports.db = {};
+exports.Schema = {};
+exports.app = {};
+exports.response = {};
+exports.request = {};
+exports.next;
+exports.modules = {};
+exports.Resources = {};
+exports.menus = {};
+exports.responseSent = false;
+exports.navs = [];
+exports.input = {};
+
+exports.boot = function(){
+
+    // load modules
+    this.load('modules');
+
+    // initialize the application
+//    this.init(request, response, next);
+
+    // load menus
+    this.setupMenus();
+
+};
+
+exports.init = function(request, response, next){
+    // if no config then don't init anything
+    if (this.config.length == 0)
+        return;
+
+    // load the configuration file
+    this.loadConfig(request, response, next);
+
+    // connect database
+    this.connectDatabase();
+
+    // setup menus
+    this.setupMenus();
+
+    // load data
+    this.load('data');
+
+    // set menus
+    this.set('MENU', 'MENU_ADMIN');
+
+    // invoke all init hooks
+    this.invoke('init');
+
+};
+
+
+exports.loadConfig = function(request, response, next){
+    var merge = require('merge'), url = require('url');
+    var content = fileSys.readFileSync(this.configFile).toString();
+    var data = eval('('+content+')');
+
+    this.request = request;
+    this.response = response;
+    this.next = next;
+
+    this.request.url = this.utils.stripTrailingSlash(this.request.url);
+
+    this.config = {
+        url : {
+            host : request.headers.host,
+            path : url.parse(request.url).pathname
+        }
+    };
+
+    this.config = merge(this.config, data);
+
+    if (data.length > 0){
+        console.log('Configuration Loaded....');
+    }
+};
+
+exports.getData = function(){
+    if (this.request.method == 'POST'){
+        console.log('this is post method');
+    }else {
+        conso
+    }
+};
+
+exports.connectDatabase = function(){
+
+    // create database connection
+    this.db = mongoose.createConnection();
+    // handle database connection error
+    this.db.on('error', console.error.bind(console, 'connection error:'));
+    // database open
+    this.db.open(this.config.database.server, this.config.database.name, this.config.database.port);
+
+    // check for database connection
+    this.db.on('open', function(){
+        console.log('Connection Opened!');
+    });
+
+    this.invoke('schema');
+
+};
+
+exports.isConfigured = function(){
+    if (this.config.length > 0){
+        return true;
+    }else {
+        return false;
+    }
+}
+
+exports.render = function(view, data){
+
+    var merge = require('merge'), ejs = require('ejs');
+    var theme_path = 'themes/'+this.config.theme;
+
+    data = merge(this.config, data);
+    data.page_title = this.config.site_name;
+    data.GizmoContent = view;
+
+
+//    console.log(GizmoCore.navs);
+
+    this.response.render(theme_path + '/index', data);
+
+    this.responseSent = true;
+}
+
+exports.load = function(type){
+
+    switch(type){
+        case 'modules':
+            var mods = fileSys.readdirSync(__dirname+'/modules');
+
+            for(var i in mods){
+                var tempModule = mods[i].split('.');
+                var name = tempModule[0];
+                var type = tempModule[1];
+                var file = null;
+                if (type == 'module'){
+                    file = GizmoCore.Resources.path.join(__dirname, '/modules/'+mods[i]);
+                    this.modules[name] = require(file);
+                }
+            }
+            console.log('modules loaded');
+            break;
+        case 'data':
+            if (this.request.method == 'POST' ){
+                this.input.post = this.request.body;
+            }else {
+                this.input.post = {};
+            }
+
+            var url_parts = this.Resources.url.parse(this.request.url, true)
+            this.input.get = url_parts.query;
+
+            break;
+    }
+}
+
+
+exports.invoke = function(hook, module){
+
+    // if module is asked
+    if (module != undefined){
+        // if module hook is defined
+        if (this.modules[module][hook]!= undefined){
+            // execute and return the values of the hook
+            return this.modules[module][hook]();
+        }
+    }else {
+        // save temporary values
+        // save return all values
+        var returnValues = [], tempValues;
+        for(var module in this.modules){
+            // set temporary values
+            tempValue = [];
+            // if hook exists
+            if (this.modules[module][hook] != undefined){
+                // get temporary values
+                tempValue = this.modules[module][hook]();
+            }
+            // merge return values with the last hook values
+            returnValues = this.utils.merge(returnValues, tempValue);
+        }
+
+        // return all values
+        return returnValues;
+    }
+}
+
+exports.utils = {
+    stripTrailingSlash : function (str) {
+        if(str.substr(-1) == '/') {
+            return str.substr(0, str.length - 1);
+        }
+        return str;
+    },
+    merge : require('merge')
+}
+
+exports.get = function (type, args) {
+    switch (type) {
+        case 'MENU':
+            break;
+    }
+}
+
+exports.set = function (type, args){
+    type = type.toUpperCase();
+    switch (type) {
+        case 'MENU':
+            this.__navigation(args);
+            break;
+    }
+}
+
+exports.__navigation = function (value){
+
+    value = value.toUpperCase();
+
+    var nav = [];
+    for (var i in this.menus){
+        if (this.menus[i].type == value){
+            nav.push(this.menus[i]);
+        }
+    }
+
+    this.navs = nav;
+}
+
+exports.preprocessHTML = function(){
+
+}
+
+exports.setupMenus = function(){
+
+    // menu parameters
+    var menus = tempMenus = [], callback = null;
+
+    // setup home page
+    this.home();
+
+    // Get all modules
+    for(var name in this.modules){
+        // if menu function exist
+        if (this.modules[name].menu != undefined){
+            // save menus temporarily
+            tempMenus = this.modules[name].menu();
+
+            // set all menus with module names
+            for(var link in tempMenus){
+                menus[link]= tempMenus[link];
+                menus[link].module = name;
+                menus[link].link = link;
+            }
+        }
+    }
+
+    // set routes for each menu
+    for(var link in menus){
+        // module name
+        name = menus[link].module;
+        // menu callback function
+        callback = menus[link].callback;
+        // set application get URLs
+        this.app.get(link, function (req, res, next){
+            GizmoCore.init(req, res, next);
+            next();
+        }, this.modules[name][callback]);
+
+        // set application post URLs
+        this.app.post(link, function (req, res, next){
+            GizmoCore.init(req, res, next);
+            next();
+        }, this.modules[name][callback]);
+    }
+
+    this.menus = menus;
+}
+
+exports.home = function () {
+    this.app.post('/', function (req, res, next){
+        GizmoCore.init(req, res, next);
+        next();
+    }, function(req, res, next){
+        GizmoCore.render('index');
+    });
+}

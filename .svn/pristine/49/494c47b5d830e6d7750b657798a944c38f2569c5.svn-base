@@ -1,0 +1,6 @@
+
+
+Gizmo.Ajax.behaviors.prototype.node = function(settings, context){
+    console.log(context);
+
+}

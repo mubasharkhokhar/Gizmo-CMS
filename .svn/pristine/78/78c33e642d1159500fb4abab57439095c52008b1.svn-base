@@ -1,0 +1,33 @@
+
+exports.commands = [];
+
+exports.init = function(){
+    console.log('ajax init');
+};
+
+exports.isAjax = function (){
+
+    if (GizmoCore.request.xhr != undefined){
+        return GizmoCore.request.xhr;
+    }else {
+        return false;
+    }
+};
+
+exports.commandInvoke = function(selector, method, options){
+    this.commands.push({
+        type : 'command',
+        selector : selector,
+        method : method,
+        options : options
+    });
+};
+
+
+exports.__getCommands = function () {
+    return this.commands;
+}
+
+exports.__resetCommands =  function(){
+    this.commands = [];
+}

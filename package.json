@@ -1,0 +1,21 @@
+{
+  "name": "Gizmo CMS",
+  "version": "0.0.1",
+  "author" : "Mubashar Khokhar <m.khokhar@social-gizmo.com>",
+  "description" : "Gizmo CMS is a CMS providing an extensible modular architeture. This project is started in Fachhochschule Kiel as a course project M113-Advance Javascript Programming under the supervisio of Prof. Dr. Robert Manzke",
+  "contributors" : [{
+      "name" : "Prakhar Shrivastava",
+      "email" : "prakharshri@gmail.com"
+  }],
+  "private": false,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.4.5",
+    "ejs": "*",
+    "forms" : "*",
+    "merge" : "*",
+    "bcrypt-nodejs" : "*"
+  }
+}

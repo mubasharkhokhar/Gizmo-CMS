@@ -1,0 +1,32 @@
+<form action="/signup" method="post">
+    <div class="well">
+        <% if (!success) {%>
+        <h4>Signup</h4>
+
+        <div class="form-group <%=(error.username) ? 'has-error' : ''%>">
+            <input type="text" name="username" placeholder="Username" class="form-control" value="<%=(GizmoCore.input.post.username) ? GizmoCore.input.post.username : ''%>" required="1"/>
+            <%-error.username%>
+        </div>
+        <div class="form-group <%=(error.password) ? 'has-error' : ''%>">
+            <input type="password" name="password" placeholder="Password" class="form-control" required="1"/>
+            <%-error.password%>
+        </div>
+        <div class="form-group <%=(error.Resetpassword) ? 'has-error' : ''%>">
+            <input type="password" name="confirm" placeholder="Confirm Password" class="form-control" required="1"/>
+            <%-error.Resetpassword%>
+        </div>
+        <div class="form-group <%=(error.email) ? 'has-error' : ''%>">
+            <input type="email" name="email" placeholder="Email" class="form-control" required="1" value="<%=(GizmoCore.input.post.email) ? GizmoCore.input.post.email : ''%>"/>
+            <%-error.email%>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Submit" class="btn btn-primary" />
+        </div>
+        <%  } else { %>
+        <div class="success">
+            <%=username%>, user successfully created. <a href="/login">Login Here</a>
+        </div>
+        <% } %>
+        <!-- /input-group -->
+    </div>
+</form>
