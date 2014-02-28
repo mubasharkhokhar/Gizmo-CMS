@@ -3,6 +3,9 @@ Gizmo-CMS
 
 Gizmo CMS is a CMS providing an extensible modular architecture. This project is started in Fachhochschule Kiel as a course project M113-Advance Javascript Programming under the supervision of Prof. Dr. Robert Manzke.
 
+Main contributors: 
+1. Prakhar Shrivastava
+2. Muhammad Awais Akhtar
 
 How To Run:
 ========
