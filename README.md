@@ -13,12 +13,13 @@ How To Run:
 
 1. Download the code.
 2. Run the app.js file on NodeJS server.
+3. Configure database setttings [config/settings.json]
 
 
 Create Custom Modules
 =====================
 1. All modules must reside in [ node_modules/gizmo/modules/ ] folder.
-2. Naming convention for the module files [ <module name>.module.js ]
+2. Naming convention for the module files [ mymodule.module.js ]
 3. Module will be enabled by default.
 4. File code follow the same artchitecture as to create a NodeJS module.
 5. hooks available "init", "menu" , "schema"
@@ -29,4 +30,5 @@ This package include 2 default themes,
 
 You can create new themes by defining them in [views] folder.
 
-Read project documentatiion for further details.
+Read project documentation for further details. 
+Download Here: https://www.dropbox.com/s/v55jolh402ope59/GizmoCMS-Final-Report.pdf
